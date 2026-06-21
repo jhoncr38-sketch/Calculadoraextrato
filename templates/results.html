@@ -7,24 +7,41 @@
     body { font-family: Arial, sans-serif; max-width: 960px; margin: 40px auto; color: #222; }
     h1 { font-size: 1.4rem; }
     .cards { display: flex; gap: 16px; margin: 24px 0; flex-wrap: wrap; }
-    .card { flex: 1; min-width: 160px; padding: 16px 20px; border-radius: 10px; background: #f3f4f6; }
-    .card.entradas { background: #dcfce7; }
-    .card.saidas { background: #fee2e2; }
-    .card.saldo { background: #dbeafe; }
+    .card {
+      flex: 1; min-width: 160px; padding: 16px 20px; border-radius: 10px; background: #f3f4f6;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .card.entradas { background: #f0fdf4; }
+    .card.saidas { background: #fef2f2; }
+    .card.saldo { background: #eff6ff; }
     .card .label { font-size: 0.8rem; color: #444; text-transform: uppercase; }
     .card .valor { font-size: 1.4rem; font-weight: bold; margin-top: 4px; }
+    .card-icone {
+      flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card.entradas .card-icone { border: 2px solid #16a34a; }
+    .card.entradas .valor { color: #15803d; }
+    .card.saidas .card-icone { border: 2px solid #dc2626; }
+    .card.saidas .valor { color: #b91c1c; }
+    .card.saldo .card-icone svg { width: 26px; height: 26px; }
     .arquivo { margin: 28px 0; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px 20px; }
     .titular-card {
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
-      gap: 10px; background: #dbeafe; border-radius: 10px; padding: 14px 18px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 14px;
+      background: #eef2f7; border-radius: 12px; padding: 12px 18px; margin-bottom: 14px;
     }
-    .titular-nome { font-size: 1.15rem; font-weight: 700; color: #1e3a8a; }
+    .titular-icone {
+      flex-shrink: 0; width: 44px; height: 44px; border-radius: 10px; background: #ffffff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .titular-icone svg { width: 24px; height: 24px; }
+    .titular-nome { font-size: 1.05rem; font-weight: 700; color: #111827; }
     .documento-badge {
-      display: inline-block; font-weight: 700; font-size: 0.85rem;
+      display: inline-block; font-weight: 700; font-size: 0.85rem; margin-left: auto;
       background: #ffffff; color: #1e3a8a; padding: 5px 14px; border-radius: 8px;
     }
-    .arquivo .banco { color: #555; font-size: 0.85rem; margin-bottom: 12px; }
-    .arquivo .banco b { color: #222; }
+    .arquivo .banco { color: #6b7280; font-size: 0.85rem; margin-top: 2px; }
+    .arquivo .banco b { color: #111827; font-weight: 600; }
     table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #eee; }
     .valor-positivo { color: #15803d; }
@@ -41,16 +58,31 @@
   {% if mostrar_total_geral %}
   <div class="cards">
     <div class="card entradas">
-      <div class="label">Total Entradas</div>
-      <div class="valor">R$ {{ total_entradas|brl }}</div>
+      <div>
+        <div class="label">Total Entradas</div>
+        <div class="valor">R$ {{ total_entradas|brl }}</div>
+      </div>
+      <div class="card-icone">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </div>
     </div>
     <div class="card saidas">
-      <div class="label">Total Saídas</div>
-      <div class="valor">R$ {{ total_saidas|brl }}</div>
+      <div>
+        <div class="label">Total Saídas</div>
+        <div class="valor">R$ {{ total_saidas|brl }}</div>
+      </div>
+      <div class="card-icone">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </div>
     </div>
     <div class="card saldo">
-      <div class="label">Saldo (Entradas - Saídas)</div>
-      <div class="valor">R$ {{ total_saldo|brl }}</div>
+      <div>
+        <div class="label">Saldo (Entradas - Saídas)</div>
+        <div class="valor">R$ {{ total_saldo|brl }}</div>
+      </div>
+      <div class="card-icone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v3M3 7v10a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2z"/><circle cx="17" cy="13" r="1.5" fill="#2563eb" stroke="none"/></svg>
+      </div>
     </div>
   </div>
   {% endif %}
@@ -61,24 +93,44 @@
       <div class="erro-box">{{ r.erro }}</div>
     {% else %}
       <div class="titular-card">
-        <span class="titular-nome">{{ r.titular or "Titular não identificado" }}</span>
+        <div class="titular-icone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 21 7 3 7"/></svg>
+        </div>
+        <div>
+          <div class="titular-nome">{{ r.titular or "Titular não identificado" }}</div>
+          <div class="banco">
+            Banco: <b>{{ r.banco }}</b>{% if r.periodo %} &middot; Período: <b>{{ r.periodo }}</b>{% endif %}
+          </div>
+        </div>
         {% if r.documento %}<span class="documento-badge">{{ r.documento }}</span>{% endif %}
-      </div>
-      <div class="banco">
-        Banco: <b>{{ r.banco }}</b>{% if r.periodo %} &middot; Período: <b>{{ r.periodo }}</b>{% endif %}
       </div>
       <div class="cards">
         <div class="card entradas">
-          <div class="label">Entradas</div>
-          <div class="valor">R$ {{ r.entradas|brl }}</div>
+          <div>
+            <div class="label">Entradas</div>
+            <div class="valor">R$ {{ r.entradas|brl }}</div>
+          </div>
+          <div class="card-icone">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </div>
         </div>
         <div class="card saidas">
-          <div class="label">Saídas</div>
-          <div class="valor">R$ {{ r.saidas|brl }}</div>
+          <div>
+            <div class="label">Saídas</div>
+            <div class="valor">R$ {{ r.saidas|brl }}</div>
+          </div>
+          <div class="card-icone">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+          </div>
         </div>
         <div class="card saldo">
-          <div class="label">Saldo</div>
-          <div class="valor">R$ {{ r.saldo|brl }}</div>
+          <div>
+            <div class="label">Saldo</div>
+            <div class="valor">R$ {{ r.saldo|brl }}</div>
+          </div>
+          <div class="card-icone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v3M3 7v10a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2z"/><circle cx="17" cy="13" r="1.5" fill="#2563eb" stroke="none"/></svg>
+          </div>
         </div>
       </div>
       <details>
