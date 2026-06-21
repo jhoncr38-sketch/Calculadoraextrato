@@ -6,6 +6,7 @@ App web que recebe extratos bancários em PDF (ou Excel) e calcula o somatório 
 
 - Banco do Brasil
 - Itaú
+- Nubank
 - Banco Inter
 - Mercado Pago
 - Relatório de Vendas PagBank
