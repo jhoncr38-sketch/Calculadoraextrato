@@ -1,0 +1,29 @@
+# Dados sensíveis - NUNCA versionar extratos bancários reais
+modelos/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Variáveis de ambiente / segredos
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel
+
+# Saídas de teste manuais
+resultado*.html
+flask.log
+
+# Editor / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

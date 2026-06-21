@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Resultado do somatório</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 960px; margin: 40px auto; color: #222; }
+    h1 { font-size: 1.4rem; }
+    .cards { display: flex; gap: 16px; margin: 24px 0; flex-wrap: wrap; }
+    .card { flex: 1; min-width: 160px; padding: 16px 20px; border-radius: 10px; background: #f3f4f6; }
+    .card.entradas { background: #dcfce7; }
+    .card.saidas { background: #fee2e2; }
+    .card.saldo { background: #dbeafe; }
+    .card .label { font-size: 0.8rem; color: #444; text-transform: uppercase; }
+    .card .valor { font-size: 1.4rem; font-weight: bold; margin-top: 4px; }
+    .arquivo { margin: 28px 0; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px 20px; }
+    .titular-card {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+      gap: 10px; background: #dbeafe; border-radius: 10px; padding: 14px 18px; margin-bottom: 14px;
+    }
+    .titular-nome { font-size: 1.15rem; font-weight: 700; color: #1e3a8a; }
+    .documento-badge {
+      display: inline-block; font-weight: 700; font-size: 0.85rem;
+      background: #ffffff; color: #1e3a8a; padding: 5px 14px; border-radius: 8px;
+    }
+    .arquivo .banco { color: #555; font-size: 0.85rem; margin-bottom: 12px; }
+    .arquivo .banco b { color: #222; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #eee; }
+    .valor-positivo { color: #15803d; }
+    .valor-negativo { color: #b91c1c; }
+    .erro-box { background: #fee2e2; color: #991b1b; padding: 12px 16px; border-radius: 8px; }
+    a.voltar { display: inline-block; margin-top: 24px; color: #2563eb; }
+    details summary { cursor: pointer; font-size: 0.85rem; color: #2563eb; }
+    .rodape { text-align: center; color: #888; font-size: 0.8rem; margin-top: 48px; }
+  </style>
+</head>
+<body>
+  <h1>Resultado do somatório</h1>
+
+  {% if mostrar_total_geral %}
+  <div class="cards">
+    <div class="card entradas">
+      <div class="label">Total Entradas</div>
+      <div class="valor">R$ {{ total_entradas|brl }}</div>
+    </div>
+    <div class="card saidas">
+      <div class="label">Total Saídas</div>
+      <div class="valor">R$ {{ total_saidas|brl }}</div>
+    </div>
+    <div class="card saldo">
+      <div class="label">Saldo (Entradas - Saídas)</div>
+      <div class="valor">R$ {{ total_saldo|brl }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% for r in resultados %}
+  <div class="arquivo">
+    {% if r.erro %}
+      <div class="erro-box">{{ r.erro }}</div>
+    {% else %}
+      <div class="titular-card">
+        <span class="titular-nome">{{ r.titular or "Titular não identificado" }}</span>
+        {% if r.documento %}<span class="documento-badge">{{ r.documento }}</span>{% endif %}
+      </div>
+      <div class="banco">
+        Banco: <b>{{ r.banco }}</b>{% if r.periodo %} &middot; Período: <b>{{ r.periodo }}</b>{% endif %}
+      </div>
+      <div class="cards">
+        <div class="card entradas">
+          <div class="label">Entradas</div>
+          <div class="valor">R$ {{ r.entradas|brl }}</div>
+        </div>
+        <div class="card saidas">
+          <div class="label">Saídas</div>
+          <div class="valor">R$ {{ r.saidas|brl }}</div>
+        </div>
+        <div class="card saldo">
+          <div class="label">Saldo</div>
+          <div class="valor">R$ {{ r.saldo|brl }}</div>
+        </div>
+      </div>
+      <details>
+        <summary>Ver {{ r.transacoes|length }} lançamentos</summary>
+        <table>
+          <thead>
+            <tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th></tr>
+          </thead>
+          <tbody>
+            {% for t in r.transacoes %}
+            <tr>
+              <td>{{ t.date }}</td>
+              <td>{{ t.description }}</td>
+              <td>{{ t.tipo }}</td>
+              <td class="{{ 'valor-positivo' if t.value >= 0 else 'valor-negativo' }}">R$ {{ t.value|brl }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </details>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <a class="voltar" href="/">&larr; Enviar outros arquivos</a>
+  <footer class="rodape">Jhonatan Rodrigues &copy; {{ ano_atual }}</footer>
+</body>
+</html>
