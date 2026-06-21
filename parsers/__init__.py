@@ -1,12 +1,17 @@
-from . import bb, itau, inter, mercadopago, pagbank_vendas, generic_excel
+from . import bb, itau, inter, mercadopago, pagbank_vendas, nubank, generic_excel
 from .base import Transaction
 
-# Ordem importa: checagens mais específicas primeiro.
+# Ordem importa: checagens mais específicas primeiro. Cuidado: o nome de outro
+# banco pode aparecer DENTRO de uma descrição de Pix (ex: um extrato Nubank
+# que tem "BANCO INTER" como destinatário de uma transferência) -- por isso
+# cada checagem usa uma frase exclusiva do cabeçalho daquele banco, nunca só
+# o nome do banco isolado.
 DETECTORES_PDF = [
     ("PagBank - Relatório de Vendas", lambda t: "relatório de vendas" in t.lower() and "pagbank" in t.lower(), pagbank_vendas),
     ("Banco do Brasil", lambda t: "extrato de conta corrente" in t.lower() and "agência" in t.lower() and "lote" in t.lower(), bb),
     ("Itaú", lambda t: "razão social" in t.lower() and "cnpj/cpf" in t.lower(), itau),
-    ("Banco Inter", lambda t: "banco inter" in t.lower(), inter),
+    ("Nubank", lambda t: "nubank.com.br" in t.lower() or "nu pagamentos" in t.lower(), nubank),
+    ("Banco Inter", lambda t: "instituição: banco inter" in t.lower(), inter),
     ("Mercado Pago", lambda t: "mercadopago" in t.lower() or "id da operação" in t.lower(), mercadopago),
 ]
 
