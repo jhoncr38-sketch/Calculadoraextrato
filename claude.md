@@ -31,6 +31,7 @@ parsers/
   inter.py               -> regras específicas do Banco Inter
   mercadopago.py         -> regras específicas do Mercado Pago
   pagbank_vendas.py      -> regras do relatório de vendas do PagBank
+  pagbank_extrato.py     -> regras do extrato da conta do PagBank/PagSeguro
   generic_excel.py       -> regra genérica para qualquer planilha Excel
 templates/
   index.html             -> a página inicial (formulário de upload)
@@ -72,6 +73,7 @@ A ordem da lista importa: verificações mais específicas vêm primeiro.
 - Banco Inter
 - Mercado Pago
 - Relatório de Vendas do PagBank
+- Extrato da conta do PagBank/PagSeguro
 - Qualquer planilha Excel (formato genérico, baseado nos nomes das colunas)
 
 ## Comandos principais
