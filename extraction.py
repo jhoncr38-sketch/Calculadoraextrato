@@ -13,5 +13,7 @@ def extract_pdf_text(file_obj) -> str:
 
 
 def extract_excel_rows(file_obj) -> pd.DataFrame:
-    """Lê um arquivo Excel e retorna um DataFrame com a primeira planilha."""
-    return pd.read_excel(file_obj)
+    """Lê a primeira planilha de um Excel sem assumir onde está o cabeçalho
+    (header=None). Cada parser decide qual linha é o cabeçalho -- isso permite
+    ler planilhas que têm linhas de título antes da tabela de verdade."""
+    return pd.read_excel(file_obj, header=None)

@@ -5,8 +5,7 @@ from datetime import datetime
 from flask import Flask, render_template, request
 
 from extraction import extract_pdf_text, extract_excel_rows
-from parsers import detect_bank
-from parsers.generic_excel import parse as parse_excel
+from parsers import detect_bank, detect_excel
 from parsers.base import Transaction, calcular_periodo
 
 logging.basicConfig(level=logging.INFO)
@@ -50,9 +49,10 @@ def processar_arquivo(file_storage):
             titular, documento = extrair_titular(texto) if extrair_titular else ("", "")
         elif extensao in EXTENSOES_EXCEL:
             df = extract_excel_rows(file_storage)
-            banco = "Excel (genérico)"
-            transacoes = parse_excel(df)
-            titular, documento = "", ""
+            banco, modulo = detect_excel(df)
+            transacoes = modulo.parse(df)
+            extrair_titular = getattr(modulo, "extrair_titular", None)
+            titular, documento = extrair_titular(df) if extrair_titular else ("", "")
         else:
             return {"arquivo": nome, "erro": "Formato de arquivo não suportado (use PDF ou Excel)."}
     except Exception:

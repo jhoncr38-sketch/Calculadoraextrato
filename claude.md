@@ -32,6 +32,7 @@ parsers/
   mercadopago.py         -> regras específicas do Mercado Pago
   pagbank_vendas.py      -> regras do relatório de vendas do PagBank
   pagbank_extrato.py     -> regras do extrato da conta do PagBank/PagSeguro
+  rede.py                -> regras do relatório de vendas da Rede (Excel)
   generic_excel.py       -> regra genérica para qualquer planilha Excel
 templates/
   index.html             -> a página inicial (formulário de upload)
@@ -55,7 +56,14 @@ banco isolado, sempre uma frase típica do cabeçalho.
 
 A ordem da lista importa: verificações mais específicas vêm primeiro.
 
+Para arquivos **Excel** o reconhecimento é parecido, mas em vez de ler o texto
+de um PDF, a função `detect_excel` olha o conteúdo das primeiras linhas da
+planilha procurando uma pista exclusiva (lista `DETECTORES_EXCEL`). Quem não
+casar com nenhum formato específico cai no parser genérico (`generic_excel`).
+
 ## Como adicionar um banco novo
+
+Para um **PDF**:
 
 1. Criar um arquivo novo dentro de `parsers/`, por exemplo `parsers/caixa.py`.
 2. Esse arquivo precisa ter uma função `parse(texto) -> list[Transaction]`
@@ -64,6 +72,13 @@ A ordem da lista importa: verificações mais específicas vêm primeiro.
    o nome e o CPF/CNPJ do titular da conta.
 4. Registrar esse banco na lista `DETECTORES_PDF` em `parsers/__init__.py`,
    com uma pista de texto exclusiva daquele banco.
+
+Para um **Excel** é igual, com duas diferenças: a função `parse` recebe um
+DataFrame do pandas (a planilha crua, sem cabeçalho fixo) em vez de texto, e o
+registro é feito na lista `DETECTORES_EXCEL`, com uma pista que procura algo
+exclusivo no conteúdo das primeiras linhas (ex.: o `rede.py` se identifica pela
+frase "extrato para simples conferência"). A `extrair_titular`, se existir,
+também recebe o DataFrame.
 
 ## Bancos/formatos já reconhecidos hoje
 
@@ -74,6 +89,7 @@ A ordem da lista importa: verificações mais específicas vêm primeiro.
 - Mercado Pago
 - Relatório de Vendas do PagBank
 - Extrato da conta do PagBank/PagSeguro
+- Relatório de Vendas da Rede (Excel)
 - Qualquer planilha Excel (formato genérico, baseado nos nomes das colunas)
 
 ## Comandos principais
@@ -104,7 +120,9 @@ python test_modelos.py
 3. Para cada arquivo enviado, a função `processar_arquivo`:
    - Se for PDF: extrai o texto (`extraction.extract_pdf_text`), descobre o
      banco (`detect_bank`), e chama o `parse()` daquele banco.
-   - Se for Excel: lê as linhas com pandas e usa o parser genérico.
+   - Se for Excel: lê a planilha com pandas, descobre o formato
+     (`detect_excel`) e chama o `parse()` correspondente (um parser específico,
+     como o da Rede, ou o genérico como reserva).
    - Se der qualquer erro (arquivo corrompido, banco não reconhecido etc.),
      devolve uma mensagem amigável — o erro técnico de verdade só fica
      registrado no log do servidor, nunca é mostrado ao usuário.
