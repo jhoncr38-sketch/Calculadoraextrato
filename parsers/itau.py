@@ -24,6 +24,11 @@ def parse(text: str) -> list[Transaction]:
         m_data = DATE_PREFIX_RE.match(linha)
         if m_data:
             current_date = m_data.group(1)
+        # Linhas antes da primeira data são cabeçalho (resumo de saldo/limite
+        # da conta, ex.: "R$ 0,00 R$ 27.000,00 R$ 0,00 R$ 27.000,00").
+        # Não são lançamentos e não podem ser somados.
+        if not current_date:
+            continue
         if is_saldo_line(linha):
             continue
         m_valor = VALOR_END_RE.search(linha)
