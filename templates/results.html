@@ -47,6 +47,38 @@
     .valor-positivo { color: #15803d; }
     .valor-negativo { color: #b91c1c; }
     .erro-box { background: #fee2e2; color: #991b1b; padding: 12px 16px; border-radius: 8px; }
+    .erro-card { border: 1px solid #e5e7eb; border-radius: 14px; padding: 32px; margin: 24px 0; background: #fff; }
+    .erro-topo { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+    .erro-ilustracao {
+      flex-shrink: 0; width: 150px; height: 150px; border-radius: 50%;
+      background: #eef4ff; display: flex; align-items: center; justify-content: center;
+    }
+    .erro-ilustracao svg { width: 80px; height: 80px; }
+    .erro-conteudo { flex: 1; min-width: 260px; }
+    .erro-titulo { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 6px 0 10px; }
+    .erro-desc { color: #475569; font-size: 1rem; line-height: 1.5; margin-bottom: 20px; }
+    .erro-info {
+      display: flex; gap: 14px; align-items: flex-start; background: #eff6ff;
+      border-radius: 10px; padding: 16px 18px; color: #1e3a5f; font-size: 0.95rem; line-height: 1.45;
+    }
+    .erro-info svg { flex-shrink: 0; width: 24px; height: 24px; margin-top: 1px; }
+    .erro-divisor { border: none; border-top: 1px solid #e5e7eb; margin: 26px 0; }
+    .erro-ajuda { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .erro-ajuda-icone {
+      flex-shrink: 0; width: 52px; height: 52px; border-radius: 50%;
+      background: #eef4ff; display: flex; align-items: center; justify-content: center;
+    }
+    .erro-ajuda-icone svg { width: 26px; height: 26px; }
+    .erro-ajuda-texto { flex: 1; min-width: 200px; }
+    .erro-ajuda-texto h3 { margin: 0 0 4px; font-size: 1.05rem; color: #0f172a; }
+    .erro-ajuda-texto p { margin: 0; color: #64748b; font-size: 0.92rem; line-height: 1.4; }
+    .btn-suporte {
+      display: inline-flex; align-items: center; gap: 10px; background: #2563eb; color: #fff;
+      text-decoration: none; font-weight: 700; font-size: 1rem; padding: 15px 26px;
+      border-radius: 10px; white-space: nowrap;
+    }
+    .btn-suporte:hover { background: #1d4ed8; }
+    .btn-suporte svg { width: 22px; height: 22px; }
     a.voltar { display: inline-block; margin-top: 24px; color: #2563eb; }
     details summary { cursor: pointer; font-size: 0.85rem; color: #2563eb; }
     .rodape { text-align: center; color: #888; font-size: 0.8rem; margin-top: 48px; }
@@ -88,11 +120,47 @@
   {% endif %}
 
   {% for r in resultados %}
+  {% if r.erro %}
+  <div class="erro-card">
+    <div class="erro-topo">
+      <div class="erro-ilustracao">
+        <svg viewBox="0 0 64 64" fill="none">
+          <path d="M14 6h22l16 16v32a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4z" fill="#ffffff" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M36 6v16h16" stroke="#2563eb" stroke-width="3" fill="none" stroke-linejoin="round"/>
+          <line x1="18" y1="30" x2="34" y2="30" stroke="#9bbcf7" stroke-width="3" stroke-linecap="round"/>
+          <line x1="18" y1="38" x2="29" y2="38" stroke="#9bbcf7" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="46" cy="46" r="12" fill="#2563eb"/>
+          <text x="46" y="51.5" font-size="15" fill="#ffffff" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">?</text>
+        </svg>
+      </div>
+      <div class="erro-conteudo">
+        {% if r.arquivo %}<div class="banco" style="margin-bottom:6px;">Arquivo: <b>{{ r.arquivo }}</b></div>{% endif %}
+        <div class="erro-titulo">Este modelo de extrato ainda não é compatível.</div>
+        <div class="erro-desc">{{ r.erro }}</div>
+        <div class="erro-info">
+          <svg viewBox="0 0 24 24" fill="#2563eb"><circle cx="12" cy="12" r="10"/><rect x="11" y="10.5" width="2" height="7" rx="1" fill="#fff"/><circle cx="12" cy="7.5" r="1.4" fill="#fff"/></svg>
+          <span>Nossa equipe pode analisar o arquivo e incluir esse banco em futuras atualizações.</span>
+        </div>
+      </div>
+    </div>
+    <hr class="erro-divisor">
+    <div class="erro-ajuda">
+      <div class="erro-ajuda-icone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><path d="M7 12H6a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1z"/><path d="M17 12h1a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-1z"/><path d="M20 17v1a3 3 0 0 1-3 3h-3"/></svg>
+      </div>
+      <div class="erro-ajuda-texto">
+        <h3>Precisa de ajuda?</h3>
+        <p>Entre em contato com nosso suporte e envie o arquivo para análise.</p>
+      </div>
+      <a class="btn-suporte" href="https://w.app/i7sjnl" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="#ffffff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 1.8a8.1 8.1 0 0 1 5.76 13.83 8.1 8.1 0 0 1-9.94 1.22l-.36-.21-3.11.82.83-3.03-.23-.37a8.1 8.1 0 0 1 7.05-12.09zm-3.6 4.04c-.17 0-.45.06-.68.31-.23.25-.9.88-.9 2.15 0 1.27.92 2.49 1.05 2.66.13.17 1.81 2.76 4.39 3.87.61.26 1.09.42 1.46.54.61.2 1.17.17 1.61.1.49-.07 1.51-.62 1.72-1.21.21-.59.21-1.1.15-1.21-.06-.1-.23-.17-.49-.29-.25-.13-1.51-.75-1.74-.83-.23-.08-.4-.13-.57.13-.17.25-.65.83-.8 1-.15.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.66-1.25-1.48-1.4-1.73-.15-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.55-1.39-.78-1.9-.2-.46-.4-.4-.55-.41z"/></svg>
+        Falar com o suporte
+      </a>
+    </div>
+  </div>
+  {% else %}
   <div class="arquivo">
-    {% if r.erro %}
-      <div class="erro-box">{{ r.erro }}</div>
-    {% else %}
-      <div class="titular-card">
+    <div class="titular-card">
         <div class="titular-icone">
           <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 21 7 3 7"/></svg>
         </div>
@@ -151,8 +219,8 @@
           </tbody>
         </table>
       </details>
-    {% endif %}
   </div>
+  {% endif %}
   {% endfor %}
 
   <a class="voltar" href="/">&larr; Enviar outros arquivos</a>
