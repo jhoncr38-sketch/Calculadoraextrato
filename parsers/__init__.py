@@ -1,4 +1,4 @@
-from . import bb, itau, inter, mercadopago, pagbank_vendas, nubank, generic_excel
+from . import bb, itau, inter, mercadopago, pagbank_vendas, pagbank_extrato, nubank, generic_excel
 from .base import Transaction
 
 # Ordem importa: checagens mais específicas primeiro. Cuidado: o nome de outro
@@ -8,6 +8,7 @@ from .base import Transaction
 # o nome do banco isolado.
 DETECTORES_PDF = [
     ("PagBank - Relatório de Vendas", lambda t: "relatório de vendas" in t.lower() and "pagbank" in t.lower(), pagbank_vendas),
+    ("PagBank - Extrato da conta", lambda t: "pagseguro internet" in t.lower() and "extrato da conta" in t.lower(), pagbank_extrato),
     ("Banco do Brasil", lambda t: "extrato de conta corrente" in t.lower() and "agência" in t.lower() and "lote" in t.lower(), bb),
     ("Itaú", lambda t: "razão social" in t.lower() and "cnpj/cpf" in t.lower(), itau),
     ("Nubank", lambda t: "nubank.com.br" in t.lower() or "nu pagamentos" in t.lower(), nubank),
