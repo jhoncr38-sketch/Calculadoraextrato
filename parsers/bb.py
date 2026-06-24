@@ -20,6 +20,17 @@ def is_aplicacao_automatica(texto: str) -> bool:
     return any(kw in texto_lower for kw in APLICACAO_AUTOMATICA)
 
 
+# "Pix - Rejeitado" / "Erro. Pix não efetuado": é um Pix que deu erro e NÃO foi
+# concluído -- o dinheiro não entrou (nem saiu) de verdade. Então não pode contar
+# como recebido. "Rejeitado" só aparece nesses casos, nunca num Pix de verdade.
+PIX_NAO_REALIZADO = ("rejeitado", "não efetuado", "nao efetuado")
+
+
+def is_pix_nao_realizado(texto: str) -> bool:
+    texto_lower = texto.lower()
+    return any(kw in texto_lower for kw in PIX_NAO_REALIZADO)
+
+
 def extrair_titular(text: str):
     """Retorna (nome_titular, documento). BB não imprime CNPJ/CPF neste layout,
     então usamos Agência/Conta como identificador no lugar do documento."""
@@ -44,7 +55,7 @@ def parse(text: str) -> list[Transaction]:
         m_valor = VALOR_RE.search(linha)
         if not m_valor:
             continue
-        if is_saldo_line(linha) or is_aplicacao_automatica(linha):
+        if is_saldo_line(linha) or is_aplicacao_automatica(linha) or is_pix_nao_realizado(linha):
             continue
         valor = parse_valor_brl(m_valor.group(1))
         sinal = m_valor.group(2)
