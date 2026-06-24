@@ -7,6 +7,18 @@ VALOR_RE = re.compile(r"([\d.]*\d,\d{2})\s*\(([+-])\)")
 TITULAR_RE = re.compile(r"Cliente\s+([^\n]+)")
 AGENCIA_CONTA_RE = re.compile(r"Agência:\s*(\S+)\s+Conta:\s*(\S+)")
 
+# "BB Rende Fácil" é a aplicação/resgate automático: o banco move dinheiro
+# sozinho entre a conta e uma aplicação. O que sai volta depois, então não é
+# entrada nem saída de verdade e NÃO deve entrar na soma. Casamos a frase
+# inteira (e não só "rende") pra não excluir por engano um Pix de alguém com
+# nome parecido (ex.: "Renderson").
+APLICACAO_AUTOMATICA = ("bb rende", "rende fácil", "rende facil")
+
+
+def is_aplicacao_automatica(texto: str) -> bool:
+    texto_lower = texto.lower()
+    return any(kw in texto_lower for kw in APLICACAO_AUTOMATICA)
+
 
 def extrair_titular(text: str):
     """Retorna (nome_titular, documento). BB não imprime CNPJ/CPF neste layout,
@@ -32,7 +44,7 @@ def parse(text: str) -> list[Transaction]:
         m_valor = VALOR_RE.search(linha)
         if not m_valor:
             continue
-        if is_saldo_line(linha):
+        if is_saldo_line(linha) or is_aplicacao_automatica(linha):
             continue
         valor = parse_valor_brl(m_valor.group(1))
         sinal = m_valor.group(2)
